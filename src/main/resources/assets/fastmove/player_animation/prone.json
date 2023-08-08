@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "valid": true,
+  "name": "prone",
+  "description": "fastmovement",
+  "author": "BeaTheBee",
+  "emote": {
+    "beginTick": 0,
+    "endTick": 6,
+    "stopTick": 7,
+    "isLoop": true,
+    "returnTick": 5,
+    "nsfw": false,
+    "degrees": true,
+    "moves": [
+      {
+        "tick": 5,
+        "easing": "EASEINOUTQUAD",
+        "body": {
+          "z": 0.3,
+          "y": -1
+        }
+      }
+    ]
+  }
+}

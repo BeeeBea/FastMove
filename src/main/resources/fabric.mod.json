@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "fastmove",
+  "version": "${version}",
+  "name": "FastMove - Parkour Movement",
+  "description": "Add some style to your movement with dive rolls, wall runs, and more!",
+  "authors": [],
+  "contact": {
+    "issues" : "https://github.com/BeeeBea/FastMove/issues",
+    "homepage": "https://github.com/BeeeBea/FastMove"
+  },
+  "license": "CC BY-SA 4.0",
+  "icon": "assets/fastmove/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "io.github.beeebea.fastmove.client.FastMoveClient"
+    ],
+    "main": [
+      "io.github.beeebea.fastmove.FastMove"
+    ]
+  },
+  "mixins": [
+    "fastmove.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}",
+    "player-animator": ">=0.3"
+  }
+}

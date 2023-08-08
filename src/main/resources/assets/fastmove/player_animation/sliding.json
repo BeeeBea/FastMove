@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "valid": true,
+  "name": "sliding",
+  "description": "fastmovement",
+  "author": "BeaTheBee",
+  "emote": {
+    "beginTick": 0,
+    "endTick": 6,
+    "stopTick": 7,
+    "isLoop": true,
+    "returnTick": 5,
+    "nsfw": false,
+    "degrees": true,
+    "moves": [
+      {
+        "tick": 5,
+        "easing": "EASEINOUTQUAD",
+        "body": {
+          "pitch": 90,
+          "z": -0.5,
+          "y": -0.5
+        },
+        "leftLeg": {
+          "pitch": -40,
+          "bend": 80
+        },
+        "rightLeg": {
+          "pitch": 0
+        }
+      }
+    ]
+  }
+}

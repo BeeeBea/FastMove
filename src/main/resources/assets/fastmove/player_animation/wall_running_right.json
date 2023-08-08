@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "valid": true,
+  "name": "wallrunning_right",
+  "description": "fastmovement",
+  "author": "BeaTheBee",
+  "emote": {
+    "beginTick": 0,
+    "endTick": 6,
+    "stopTick": 7,
+    "isLoop": true,
+    "returnTick": 5,
+    "nsfw": false,
+    "degrees": true,
+    "moves": [
+      {
+        "tick": 5,
+        "easing": "EASEINOUTQUAD",
+        "rightArm": {
+          "roll": 45,
+          "bend": -45
+        },
+        "body": {
+          "roll": 45
+        }
+      }
+    ]
+  }
+}
