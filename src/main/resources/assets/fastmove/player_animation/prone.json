@@ -2,7 +2,7 @@
   "version": 1,
   "valid": true,
   "name": "prone",
-  "description": "fastmovement",
+  "description": "FastMove",
   "author": "BeaTheBee",
   "emote": {
     "beginTick": 0,

@@ -2,7 +2,7 @@
   "version": 1,
   "valid": true,
   "name": "wallrunning_left",
-  "description": "fastmovement",
+  "description": "FastMove",
   "author": "BeaTheBee",
   "emote": {
     "beginTick": 0,

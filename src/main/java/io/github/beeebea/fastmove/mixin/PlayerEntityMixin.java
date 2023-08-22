@@ -9,7 +9,6 @@ import net.minecraft.entity.damage.DeathMessageType;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -211,7 +210,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
     @Inject(method = "travel", at = @At("HEAD"))
     private void fastmove_travel(Vec3d movementInput, CallbackInfo info) {
         if (!isMainPlayer()) return;
-        if (abilities.flying) return;
+        if (abilities.flying || isClimbing()) return;
         if(isSneaking()){
             if(!lastSneakingState) {
                 if (!isOnGround()) {

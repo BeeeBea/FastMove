@@ -23,6 +23,7 @@ public class FastMoveClient extends FastMove implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        LOGGER.info("initializing FastMove Client :3");
 
         moveStateUpdater = new IMoveStateUpdater(){
             @Override
@@ -75,7 +76,7 @@ public class FastMoveClient extends FastMove implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(FastMove.MOVE_STATE, (client, handler, buf, responseSender) -> {
             if (client.world != null) {
                 var uuid = buf.readUuid();
-                var moveStateInt = buf.getInt(0);
+                var moveStateInt = buf.readInt();
                 MoveState moveState = MoveState.STATE(moveStateInt);
                 IFastPlayer fastPlayer = (IFastPlayer) client.world.getPlayerByUuid(uuid);
                 if (fastPlayer != null) fastPlayer.fastmove_setMoveState(moveState);

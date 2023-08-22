@@ -3,11 +3,11 @@
   "id": "fastmove",
   "version": "${version}",
   "name": "FastMove - Parkour Movement",
-  "description": "Add some style to your movement with dive rolls, wall runs, and more!",
+  "description": "Add some style to your movement with *fully animated* dive rolls, wall runs, and more!  :3",
   "authors": [],
   "contact": {
     "issues" : "https://github.com/BeeeBea/FastMove/issues",
-    "homepage": "https://github.com/BeeeBea/FastMove"
+    "homepage": "https://modrinth.com/mod/fastmove"
   },
   "license": "CC BY-SA 4.0",
   "icon": "assets/fastmove/icon.png",

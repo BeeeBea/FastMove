@@ -17,8 +17,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(AbstractClientPlayerEntity.class)
 public abstract class AbstractClientPlayerEntityMixin implements IAnimatedPlayer{
     @Unique
-    private IFastPlayer fastPlayer(){ return (IFastPlayer) this;}
-    @Unique
     private final ModifierLayer<IAnimation> mainAnimationLayer = new ModifierLayer<>();
     @Unique
     private final ModifierLayer<IAnimation> bodyAnimationLayer = new ModifierLayer<>();

@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.UUID;
 
 public class FastMove implements ModInitializer {
     public static final String MOD_ID = "fastmove";
@@ -25,11 +26,11 @@ public class FastMove implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        LOGGER.info("initializing FastMove :3");
 
         moveStateUpdater = new IMoveStateUpdater(){
             @Override
             public void setMoveState(PlayerEntity player, MoveState moveState) {
-
             }
             @Override
             public void setAnimationState(PlayerEntity player, MoveState moveState) {
@@ -44,7 +45,7 @@ public class FastMove implements ModInitializer {
             IFastPlayer fastPlayer = (IFastPlayer) server.getPlayerManager().getPlayer(uuid);
             if( fastPlayer != null) fastPlayer.fastmove_setMoveState(moveState);
 
-            SendToClients(player, MOVE_STATE, buf);
+            SendToClients((PlayerEntity) fastPlayer, MOVE_STATE, uuid, moveStateInt);
 
         });
 
@@ -57,11 +58,14 @@ public class FastMove implements ModInitializer {
         });
     }
 
-    public static void SendToClients(PlayerEntity source, Identifier type, PacketByteBuf buf){
+    public static void SendToClients(PlayerEntity source, Identifier type, UUID uuid, int moveStateInt){
         synchronized (_queueLock) {
             _actionQueue.add(() -> {
                 for (PlayerEntity target : source.getServer().getPlayerManager().getPlayerList()) {
-                    if (target != source && target.canSee(source)) {
+                    if (target != source && target.squaredDistanceTo(source) < 6400) {
+                        var buf = PacketByteBufs.create();
+                        buf.writeUuid(uuid);
+                        buf.writeInt(moveStateInt);
                         ServerPlayNetworking.send((ServerPlayerEntity) target, type, buf);
                     }
                 }

@@ -3,7 +3,7 @@
 
 Ever wanted to move fast? FastMove adds a few parkour mechanics to Minecraft, allowing you to traverse the world in style. This mod is inspired by the movement mechanics of games like Titanfall, Mirror's Edge, and Warframe.
 
-This mod should work with BetterCombat, FirstPersonModel, and NotEnoughAnimations
+All the new movement mechanics are animated! This mod should work well with other animation enhancing mods like BetterCombat, FirstPersonModel, and NotEnoughAnimations.
 
 ### Features
 - #### Dive Rolling
@@ -21,20 +21,21 @@ This mod should work with BetterCombat, FirstPersonModel, and NotEnoughAnimation
 
 ### TODO:
 - [ ] Config system
+- [ ] Improved animations
 - [ ] HUD elements showing key movement information
 - [ ] Smoother transitions for fluid movement
 - [ ] More movement mechanics
-  - [ ] Ledge grabbing
+  - [ ] Ledge Grabbing
   - [ ] Vaulting
-  - [ ] Swimming
+  - [ ] Better Swimming
 
 
 ### Notes
 Includes [playerAnimator](https://modrinth.com/mod/playeranimator) and [bendy-lib](https://modrinth.com/mod/bendy-lib) by KosmX.
 
-This mod vanilla movement cheat detection because... it's annoying. If you use this on a server without this mod, you'll probably be kicked / banned.
+This mod disables vanilla movement cheat detection because... it's annoying. If you use this on a server without this mod, you'll probably be kicked / banned.
 
-Please put any suggestions, improvements, or bugs you find on the [github page](https://github.com/BeeeBea/FastMove).
+Please put any suggestions, improvements, incompatibilities, or bugs you find on [GitHub](https://github.com/BeeeBea/FastMove).
 
 ### License
 This mod is licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). 

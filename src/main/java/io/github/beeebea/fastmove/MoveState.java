@@ -51,6 +51,10 @@ public class MoveState {
         if(obj instanceof String){
             return ((String) obj).equals(this.name);
         }
+        if(obj == null && this.name.equals("none")){
+            return true;
+        }
+
         return false;
     }
 
