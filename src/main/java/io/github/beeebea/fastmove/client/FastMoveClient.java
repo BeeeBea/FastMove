@@ -55,7 +55,7 @@ public class FastMoveClient extends FastMove implements ClientModInitializer {
                     }
                 }
 
-                var fade = AbstractFadeModifier.standardFadeIn(1, Ease.INOUTQUAD);
+                var fade = AbstractFadeModifier.standardFadeIn(5, Ease.INOUTQUAD);
                 var anim = _animations.get(moveState.name);
                 if(anim == null) {
                     animationBodyContainer.replaceAnimationWithFade(fade, null);

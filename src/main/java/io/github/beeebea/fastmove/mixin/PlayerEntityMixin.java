@@ -36,9 +36,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
     @Shadow @Final private PlayerAbilities abilities;
     @Shadow protected HungerManager hungerManager;
     @Unique private MoveState moveState = MoveState.NONE;
-    @Unique MoveState lastMoveState = MoveState.NONE;
+    @Unique private MoveState lastMoveState = MoveState.NONE;
     @Unique private Vec3d bonusVelocity = Vec3d.ZERO;
     @Unique private int rollTickCounter = 0;
+    @Unique private int wallRunCounter = 0;
     @Unique private boolean jumpInput = false;
     @Unique  private boolean lastSneakingState = false;
     @Unique private boolean lastJumpInput = false;
@@ -75,6 +76,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
             }
             FastMove.moveStateUpdater.setAnimationState((PlayerEntity) (Object) this, moveState);
             updatePose();
+            if(moveState == MoveState.PRONE || moveState == MoveState.ROLLING) setPose(EntityPose.SWIMMING);
             calculateDimensions();
         }
     }
@@ -166,7 +168,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
                     rollTickCounter= 0;
                     moveState = lastSneakingState ? MoveState.PRONE : MoveState.NONE;
                 }
-                setPose(EntityPose.SWIMMING);
                 bonusDecay = 0.98;
             }
             if(moveState == MoveState.SLIDING) {
@@ -174,18 +175,15 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
                     moveState = MoveState.NONE;
                 }
             }
-            if(moveState == MoveState.PRONE) {
-                setPose(EntityPose.SWIMMING);
-            }
             var vel = getVelocity();
             var hasWall = getWallDirection();
-            if(!isOnGround() && jumpInput && !lastJumpInput && hasWall && vel.y <= 0) {
-                moveState = MoveState.WALLRUNNING_LEFT;
-            }
+
             if(moveState == MoveState.WALLRUNNING_LEFT || moveState == MoveState.WALLRUNNING_RIGHT) {
                 if(!hasWall || isOnGround()) {
+                    wallRunCounter = 0;
                     moveState = MoveState.NONE;
                 } else {
+                    wallRunCounter++;
                     setSprinting(true);
                     var flatVel = vel.multiply(1,0,1);
                     var wallVel = isWallLeft ? flatVel.normalize().rotateY(90) : flatVel.normalize().rotateY(-90);
@@ -193,18 +191,30 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
                     if(fastmove_velocityToMovementInput(flatVel, getYaw()).dotProduct(lastWallDir) < 0) {
                         addVelocity(wallVel.multiply(-0.1,0,-0.1));
                     }
-                    addVelocity(new Vec3d(0,-vel.y,0));
+                    addVelocity(new Vec3d(0,-vel.y * (1 - ((double) wallRunCounter / FastMove.CONFIG.wallRunDurationTicks())),0));
                     bonusVelocity = Vec3d.ZERO;
                     if(!jumpInput){
                         addVelocity(wallVel.multiply(0.3,0,0.3).add(new Vec3d(0,0.4,0)));
                         moveState = MoveState.NONE;
                     }
                 }
+            } else {
+                wallRunCounter = 0;
+                if(!isOnGround() && jumpInput && hasWall && vel.y <= 0) {
+                    moveState = MoveState.WALLRUNNING_LEFT;
+                }
             }
+
             addVelocity(bonusVelocity);
             bonusVelocity = bonusVelocity.multiply(bonusDecay,0,bonusDecay);
         }
+
         updateCurrentMoveState();
+    }
+
+    @Inject(method = "tick" , at = @At("TAIL"))
+    private void fastmove_tick_tail(CallbackInfo info) {
+        if(moveState == MoveState.PRONE || moveState == MoveState.ROLLING) setPose(EntityPose.SWIMMING);
     }
 
     @Inject(method = "travel", at = @At("HEAD"))
@@ -214,7 +224,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
         if(isSneaking()){
             if(!lastSneakingState) {
                 if (!isOnGround()) {
-                    hungerManager.addExhaustion(50);
+                    hungerManager.addExhaustion(FastMove.CONFIG.rollStaminaCost());
                     moveState = MoveState.ROLLING;
                     bonusVelocity = fastmove_movementInputToVelocity(new Vec3d(0, 0, 1), 0.1f, getYaw());
                 } else if (isSprinting()) {

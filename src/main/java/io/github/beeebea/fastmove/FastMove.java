@@ -14,9 +14,11 @@ import org.slf4j.LoggerFactory;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.UUID;
+import io.github.beeebea.fastmove.FastMoveConfig;
 
 public class FastMove implements ModInitializer {
     public static final String MOD_ID = "fastmove";
+    public static final FastMoveConfig CONFIG = FastMoveConfig.createAndLoad();
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final Identifier MOVE_STATE = new Identifier(MOD_ID, "move_state");
     private static final Object _queueLock = new Object();

@@ -20,10 +20,10 @@ All the new movement mechanics are animated! This mod should work well with othe
 - #### And More...
 
 ### TODO:
-- [ ] Config system
+- [x] Config system
 - [ ] Improved animations
 - [ ] HUD elements showing key movement information
-- [ ] Smoother transitions for fluid movement
+- [x] Smoother transitions for fluid movement
 - [ ] More movement mechanics
   - [ ] Ledge Grabbing
   - [ ] Vaulting

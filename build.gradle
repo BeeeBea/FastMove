@@ -17,6 +17,8 @@ repositories {
         name "KosmX's maven"
         url 'https://maven.kosmx.dev/'
     }
+    maven { url 'https://maven.wispforest.io' }
+    //maven { url "https://maven.terraformersmc.com/releases/" }
 }
 
 dependencies {
@@ -34,6 +36,13 @@ dependencies {
 
     //You might want bendy-lib. playerAnimator will wrap it.
     include modRuntimeOnly("io.github.kosmx.bendy-lib:bendy-lib-fabric:${project.bendylib_version}")
+
+    modImplementation "io.wispforest:owo-lib:${project.owo_version}"
+    annotationProcessor "io.wispforest:owo-lib:${project.owo_version}"
+    include "io.wispforest:owo-sentinel:${project.owo_version}"
+
+    //for testing config screen
+    //include modImplementation("com.terraformersmc:modmenu:7.1.0")
 }
 
 processResources {

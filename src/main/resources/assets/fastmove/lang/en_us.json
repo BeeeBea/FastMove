@@ -1,0 +1,5 @@
+{
+  "text.config.fastmove-config.title" : "FastMove Config",
+  "text.config.fastmove-config.option.wallRunDurationTicks" : "Wall Run Duration (Ticks)",
+  "text.config.fastmove-config.option.rollStaminaCost" : "Dive Roll Stamina Cost",
+}
