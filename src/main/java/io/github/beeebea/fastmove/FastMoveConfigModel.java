@@ -13,4 +13,8 @@ public class FastMoveConfigModel {
     @Sync(Option.SyncMode.OVERRIDE_CLIENT)
     public int rollStaminaCost = 50;
 
+    @Sync(Option.SyncMode.OVERRIDE_CLIENT)
+    public double rollSpeedBoostMult = 1.0;
+    @Sync(Option.SyncMode.OVERRIDE_CLIENT)
+    public double slideSpeedBoostMult = 1.0;
 }

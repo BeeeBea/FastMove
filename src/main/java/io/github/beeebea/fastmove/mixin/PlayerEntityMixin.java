@@ -226,10 +226,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
                 if (!isOnGround()) {
                     hungerManager.addExhaustion(FastMove.CONFIG.rollStaminaCost());
                     moveState = MoveState.ROLLING;
-                    bonusVelocity = fastmove_movementInputToVelocity(new Vec3d(0, 0, 1), 0.1f, getYaw());
+                    bonusVelocity = fastmove_movementInputToVelocity(new Vec3d(0, 0, 1), 0.1f * FastMove.CONFIG.rollSpeedBoostMult(), getYaw());
                 } else if (isSprinting()) {
                     moveState = MoveState.SLIDING;
-                    bonusVelocity = fastmove_movementInputToVelocity(new Vec3d(0,0,1), 0.2f, getYaw());
+                    bonusVelocity = fastmove_movementInputToVelocity(new Vec3d(0,0,1), 0.2f * FastMove.CONFIG.slideSpeedBoostMult(), getYaw());
                 }
                 setSprinting(true);
             }
