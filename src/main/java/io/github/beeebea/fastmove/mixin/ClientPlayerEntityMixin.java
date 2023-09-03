@@ -19,7 +19,7 @@ public abstract class ClientPlayerEntityMixin {
     @Inject(method = "move" , at = @At("HEAD"))
     public void fastmove_move(MovementType type, Vec3d movement, CallbackInfo ci){
         if(((Object) this) instanceof IFastPlayer player){
-            player.fastmove_setJumpInput(input.jumping);
+            if(input != null) player.fastmove_setJumpInput(input.jumping);
         }
 
     }
