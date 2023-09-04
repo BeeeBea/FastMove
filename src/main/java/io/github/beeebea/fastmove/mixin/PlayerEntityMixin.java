@@ -220,7 +220,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
     @Inject(method = "travel", at = @At("HEAD"))
     private void fastmove_travel(Vec3d movementInput, CallbackInfo info) {
         if (!isMainPlayer()) return;
-        if (abilities.flying || isClimbing()) return;
+        if (abilities.flying || isClimbing() || isTouchingWater() || isFallFlying()) return;
         if(isSneaking()){
             if(!lastSneakingState) {
                 if (!isOnGround()) {
