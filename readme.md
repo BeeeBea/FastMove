@@ -31,7 +31,7 @@ All the new movement mechanics are animated! This mod should work well with othe
 
 
 ### Notes
-Includes [playerAnimator](https://modrinth.com/mod/playeranimator) and [bendy-lib](https://modrinth.com/mod/bendy-lib) by KosmX.
+Includes [playerAnimator](https://modrinth.com/mod/playeranimator) and [bendy-lib](https://modrinth.com/mod/bendy-lib) by KosmX. Requires [owo-lib](https://modrinth.com/mod/owo-lib) for config.
 
 This mod disables vanilla movement cheat detection because... it's annoying. If you use this on a server without this mod, you'll probably be kicked / banned.
 

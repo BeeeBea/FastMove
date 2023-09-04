@@ -1,7 +1,21 @@
 {
   "text.config.fastmove-config.title" : "FastMove Config",
-  "text.config.fastmove-config.option.wallRunDurationTicks" : "Wall Run Duration (Ticks)",
-  "text.config.fastmove-config.option.rollStaminaCost" : "Dive Roll Stamina Cost",
-  "text.config.fastmove-config.option.rollSpeedBoostMult" : "Dive Roll Speed Boost",
-  "text.config.fastmove-config.option.slideSpeedBoostMult" : "Slide Speed Boost"
+
+  "text.config.fastmove-config.category.diveRoll" : "Dive-Roll Options",
+  "text.config.fastmove-config.option.diveRoll.enabled" : "Enabled",
+  "text.config.fastmove-config.option.diveRoll.staminaCost" : "Stamina Cost",
+  "text.config.fastmove-config.option.diveRoll.speedBoostMult" : "Speed Boost",
+  "text.config.fastmove-config.option.diveRoll.whenSwimming" : "Enabled While Underwater   (Unbalanced)",
+  "text.config.fastmove-config.option.diveRoll.whenFlying" : "Enabled While Using Elytra   (Unbalanced)",
+
+  "text.config.fastmove-config.category.slide" : "Slide Options",
+  "text.config.fastmove-config.option.slide.enabled" : "Enabled",
+  "text.config.fastmove-config.option.slide.staminaCost" : "Stamina Cost",
+  "text.config.fastmove-config.option.slide.speedBoostMult" : "Speed Boost",
+
+  "text.config.fastmove-config.category.wallRun" : "Wall-Run Options",
+  "text.config.fastmove-config.option.wallRun.enabled" : "Enabled",
+  "text.config.fastmove-config.option.wallRun.staminaCost" : "Stamina Cost",
+  "text.config.fastmove-config.option.wallRun.speedBoostMult" : "Speed Boost",
+  "text.config.fastmove-config.option.wallRun.durationTicks" : "Duration (Ticks)"
 }

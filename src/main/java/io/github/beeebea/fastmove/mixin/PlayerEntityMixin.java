@@ -111,6 +111,41 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
     }
 
     @Unique
+    private void fastmove_WallRun() {
+        var vel = getVelocity();
+        var hasWall = getWallDirection();
+
+        if (moveState == MoveState.WALLRUNNING_LEFT || moveState == MoveState.WALLRUNNING_RIGHT) {
+            if (!hasWall || isOnGround()) {
+                wallRunCounter = 0;
+                moveState = MoveState.NONE;
+            } else {
+                wallRunCounter++;
+                setSprinting(true);
+                var flatVel = vel.multiply(1, 0, 1);
+                var wallVel = isWallLeft ? flatVel.normalize().rotateY(90) : flatVel.normalize().rotateY(-90);
+                moveState = !isWallLeft ? MoveState.WALLRUNNING_LEFT : MoveState.WALLRUNNING_RIGHT;
+                if (fastmove_velocityToMovementInput(flatVel, getYaw()).dotProduct(lastWallDir) < 0) {
+                    addVelocity(wallVel.multiply(-0.1, 0, -0.1));
+                }
+                addVelocity(new Vec3d(0, -vel.y * (1 - ((double) wallRunCounter / FastMove.CONFIG.wallRun.durationTicks())), 0));
+                bonusVelocity = Vec3d.ZERO;
+                if (!jumpInput) {
+                    double velocityMult = FastMove.CONFIG.wallRun.speedBoostMult();
+                    addVelocity(wallVel.multiply(0.3 * velocityMult, 0, 0.3 * velocityMult).add(new Vec3d(0, 0.4 * velocityMult, 0)));
+                    moveState = MoveState.NONE;
+                }
+            }
+        } else {
+            wallRunCounter = 0;
+            if (!isOnGround() && jumpInput && hasWall && vel.y <= 0) {
+                moveState = MoveState.WALLRUNNING_LEFT;
+                hungerManager.addExhaustion(FastMove.CONFIG.wallRun.staminaCost());
+            }
+        }
+    }
+
+    @Unique
     private boolean getWallDirection(){
         var flat = getVelocity().multiply(1,0,1);
         if(flat.lengthSquared() < 0.01) return false;
@@ -142,6 +177,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
         return false;
     }
 
+    @Unique
+    private boolean fastmove_isValidForMovement(boolean canSwim, boolean canElytra){
+
+        return !isSpectator() && (canElytra || !isFallFlying()) && (canSwim || !isTouchingWater()) && !isClimbing() && !abilities.flying;
+    }
+
     @Inject(method = "getDimensions", at = @At("HEAD"), cancellable = true)
     public void fastmove_getDimensions(EntityPose pose, CallbackInfoReturnable<EntityDimensions> cir) {
         var moveState = fastmove_getMoveState();
@@ -159,6 +200,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
         if(this.isMainPlayer()) {
             if (abilities.flying) {
                 moveState = MoveState.NONE;
+                updateCurrentMoveState();
                 return;
             }
             var bonusDecay = 0.9;
@@ -175,35 +217,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
                     moveState = MoveState.NONE;
                 }
             }
-            var vel = getVelocity();
-            var hasWall = getWallDirection();
 
-            if(moveState == MoveState.WALLRUNNING_LEFT || moveState == MoveState.WALLRUNNING_RIGHT) {
-                if(!hasWall || isOnGround()) {
-                    wallRunCounter = 0;
-                    moveState = MoveState.NONE;
-                } else {
-                    wallRunCounter++;
-                    setSprinting(true);
-                    var flatVel = vel.multiply(1,0,1);
-                    var wallVel = isWallLeft ? flatVel.normalize().rotateY(90) : flatVel.normalize().rotateY(-90);
-                    moveState = !isWallLeft ? MoveState.WALLRUNNING_LEFT : MoveState.WALLRUNNING_RIGHT;
-                    if(fastmove_velocityToMovementInput(flatVel, getYaw()).dotProduct(lastWallDir) < 0) {
-                        addVelocity(wallVel.multiply(-0.1,0,-0.1));
-                    }
-                    addVelocity(new Vec3d(0,-vel.y * (1 - ((double) wallRunCounter / FastMove.CONFIG.wallRunDurationTicks())),0));
-                    bonusVelocity = Vec3d.ZERO;
-                    if(!jumpInput){
-                        addVelocity(wallVel.multiply(0.3,0,0.3).add(new Vec3d(0,0.4,0)));
-                        moveState = MoveState.NONE;
-                    }
-                }
-            } else {
-                wallRunCounter = 0;
-                if(!isOnGround() && jumpInput && hasWall && vel.y <= 0) {
-                    moveState = MoveState.WALLRUNNING_LEFT;
-                }
-            }
+            if(FastMove.CONFIG.wallRun.enabled()) fastmove_WallRun();
 
             addVelocity(bonusVelocity);
             bonusVelocity = bonusVelocity.multiply(bonusDecay,0,bonusDecay);
@@ -220,18 +235,22 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
     @Inject(method = "travel", at = @At("HEAD"))
     private void fastmove_travel(Vec3d movementInput, CallbackInfo info) {
         if (!isMainPlayer()) return;
-        if (abilities.flying || isClimbing()) return;
+        if (abilities.flying) return;
         if(isSneaking()){
             if(!lastSneakingState) {
-                if (!isOnGround()) {
-                    hungerManager.addExhaustion(FastMove.CONFIG.rollStaminaCost());
+                var conf = FastMove.CONFIG;
+
+                if (conf.diveRoll.enabled() && !isOnGround() && fastmove_isValidForMovement(conf.diveRoll.whenSwimming(), conf.diveRoll.whenFlying())) {
+                    hungerManager.addExhaustion(conf.diveRoll.staminaCost());
                     moveState = MoveState.ROLLING;
-                    bonusVelocity = fastmove_movementInputToVelocity(new Vec3d(0, 0, 1), 0.1f * FastMove.CONFIG.rollSpeedBoostMult(), getYaw());
-                } else if (isSprinting()) {
+                    bonusVelocity = fastmove_movementInputToVelocity(new Vec3d(0, 0, 1), 0.1f * conf.diveRoll.speedBoostMult(), getYaw());
+                    setSprinting(true);
+                } else if (conf.slide.enabled() && isSprinting() && fastmove_isValidForMovement(false, false) ) {
+                    hungerManager.addExhaustion(conf.slide.staminaCost());
                     moveState = MoveState.SLIDING;
-                    bonusVelocity = fastmove_movementInputToVelocity(new Vec3d(0,0,1), 0.2f * FastMove.CONFIG.slideSpeedBoostMult(), getYaw());
+                    bonusVelocity = fastmove_movementInputToVelocity(new Vec3d(0,0,1), 0.2f * conf.slide.speedBoostMult(), getYaw());
+                    setSprinting(true);
                 }
-                setSprinting(true);
             }
         }else{
             if(moveState == MoveState.PRONE) {
@@ -266,7 +285,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
 
     @Inject(method= "damage", at=@At("HEAD"), cancellable = true)
     private void fastmove_damage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir){
-        if(source.getType().deathMessageType() == DeathMessageType.FALL_VARIANTS &&  moveState == MoveState.ROLLING){
+        if(source.getType().deathMessageType() == DeathMessageType.FALL_VARIANTS && moveState == MoveState.ROLLING){
             cir.setReturnValue(false);
             cir.cancel();
         }

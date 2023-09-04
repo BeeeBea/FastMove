@@ -1,20 +1,44 @@
 package io.github.beeebea.fastmove;
 
 import io.wispforest.owo.config.Option;
-import io.wispforest.owo.config.annotation.Config;
-import io.wispforest.owo.config.annotation.Modmenu;
-import io.wispforest.owo.config.annotation.Sync;
+import io.wispforest.owo.config.annotation.*;
 
 @Modmenu(modId = FastMove.MOD_ID)
-@Config(name = "fastmove-config", wrapperName = "FastMoveConfig")
+@Config(name = "fastmove", wrapperName = "FastMoveConfig")
 public class FastMoveConfigModel {
+    @Nest
     @Sync(Option.SyncMode.OVERRIDE_CLIENT)
-    public int wallRunDurationTicks = 60;
+    public movementOptionsEnv diveRoll = new movementOptionsEnv();
+    @Nest
     @Sync(Option.SyncMode.OVERRIDE_CLIENT)
-    public int rollStaminaCost = 50;
+    public movementOptions slide = new movementOptions();
+    @Nest
+    @Sync(Option.SyncMode.OVERRIDE_CLIENT)
+    public movementOptionsDuration wallRun = new movementOptionsDuration();
 
-    @Sync(Option.SyncMode.OVERRIDE_CLIENT)
-    public double rollSpeedBoostMult = 1.0;
-    @Sync(Option.SyncMode.OVERRIDE_CLIENT)
-    public double slideSpeedBoostMult = 1.0;
+    public static class movementOptions {
+        public boolean enabled = true;
+        @RangeConstraint(min = 0, max = 999)
+        public int staminaCost = 10;
+        @RangeConstraint(min = 0, max = 10)
+        public double speedBoostMult = 1.0;
+    }
+    public static class movementOptionsEnv {
+        public boolean enabled = true;
+        @RangeConstraint(min = 0, max = 999)
+        public int staminaCost = 50;
+        @RangeConstraint(min = 0, max = 10)
+        public double speedBoostMult = 1.0;
+        public boolean whenSwimming = false;
+        public boolean whenFlying = false;
+    }
+    public static class movementOptionsDuration {
+        public boolean enabled = true;
+        @RangeConstraint(min = 0, max = 999)
+        public int staminaCost = 0;
+        @RangeConstraint(min = 0, max = 10)
+        public double speedBoostMult = 1.0;
+        @RangeConstraint(min = 1, max = 9999)
+        public int durationTicks = 60;
+    }
 }

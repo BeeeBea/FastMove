@@ -18,6 +18,8 @@ repositories {
         url 'https://maven.kosmx.dev/'
     }
     maven { url 'https://maven.wispforest.io' }
+
+    //for testing config screen
     //maven { url "https://maven.terraformersmc.com/releases/" }
 }
 
