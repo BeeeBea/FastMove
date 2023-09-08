@@ -6,7 +6,7 @@ import java.util.Map;
 public class MoveState {
 
     public static final MoveState NONE = new MoveState("none", false);
-    public static final MoveState SLIDING = new MoveState("sliding", true);
+    public static final MoveState SLIDING = new MoveState("sliding2", true);
     public static final MoveState ROLLING = new MoveState("rolling", true);
     public static final MoveState WALLRUNNING_LEFT = new MoveState("wallrunning_left", false);
     public static final MoveState WALLRUNNING_RIGHT = new MoveState("wallrunning_right", false);
