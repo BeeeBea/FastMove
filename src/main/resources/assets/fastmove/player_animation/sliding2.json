@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "valid": true,
+  "name": "sliding2",
+  "description": "FastMove",
+  "author": "GalatynF",
+  "emote": {
+    "beginTick": 0,
+    "endTick": 6,
+    "stopTick": 7,
+    "isLoop": true,
+    "returnTick": 5,
+    "nsfw": false,
+    "degrees": true,
+    "moves": [
+      {
+        "tick": 5,
+        "easing": "EASEINOUTQUAD",
+        "body": {
+          "pitch": 90,
+          "roll": 75,
+          "yaw": 7,
+          "y": -0.2
+        },
+        "leftLeg": {
+          "pitch": -40,
+          "bend": 90,
+          "z": 5
+        },
+        "rightLeg": {
+          "pitch": 10,
+          "z": 5
+        },
+        "leftArm": {
+          "pitch": 180,
+          "yaw": 15,
+          "bend": 10
+        },
+        "rightArm": {
+          "pitch": -45,
+          "bend": -75,
+          "roll": 90
+        }
+      }
+    ]
+  }
+}
