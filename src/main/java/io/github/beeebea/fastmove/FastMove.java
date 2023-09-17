@@ -1,5 +1,6 @@
 package io.github.beeebea.fastmove;
 
+import io.github.beeebea.fastmove.client.FastMoveInput;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -19,11 +20,11 @@ import io.github.beeebea.fastmove.FastMoveConfig;
 public class FastMove implements ModInitializer {
     public static final String MOD_ID = "fastmove";
     public static final FastMoveConfig CONFIG = FastMoveConfig.createAndLoad();
+    public static FastMoveInput INPUT = new FastMoveInput();
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final Identifier MOVE_STATE = new Identifier(MOD_ID, "move_state");
     private static final Object _queueLock = new Object();
     private static final Queue<Runnable> _actionQueue = new LinkedList<>();
-
     public static IMoveStateUpdater moveStateUpdater;
 
     @Override

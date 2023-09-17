@@ -3,6 +3,7 @@ package io.github.beeebea.fastmove.mixin;
 import io.github.beeebea.fastmove.FastMove;
 import io.github.beeebea.fastmove.IFastPlayer;
 import io.github.beeebea.fastmove.MoveState;
+import io.github.beeebea.fastmove.client.FastMoveInput;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DeathMessageType;
@@ -40,10 +41,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
     @Unique private Vec3d bonusVelocity = Vec3d.ZERO;
     @Unique private int rollTickCounter = 0;
     @Unique private int wallRunCounter = 0;
-    @Unique private boolean jumpInput = false;
-    @Unique  private boolean lastSneakingState = false;
-    @Unique private boolean lastJumpInput = false;
-    @Unique private boolean lastSprintingState = false;
     @Unique private Vec3d lastWallDir = Vec3d.ZERO;
     @Unique private boolean isWallLeft = false;
 
@@ -55,13 +52,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
     @Override
     public void fastmove_setMoveState(MoveState moveState) {
         this.moveState = moveState;
-    }
-
-    @Override
-    public void fastmove_setJumpInput(boolean input) {
-        if(input == jumpInput) return;
-        lastJumpInput = jumpInput;
-        jumpInput = input;
     }
 
     @Unique
@@ -130,7 +120,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
                 }
                 addVelocity(new Vec3d(0, -vel.y * (1 - ((double) wallRunCounter / FastMove.CONFIG.wallRun.durationTicks())), 0));
                 bonusVelocity = Vec3d.ZERO;
-                if (!jumpInput) {
+                if (!FastMove.INPUT.ismoveUpKeyPressed) {
                     double velocityMult = FastMove.CONFIG.wallRun.speedBoostMult();
                     addVelocity(wallVel.multiply(0.3 * velocityMult, 0, 0.3 * velocityMult).add(new Vec3d(0, 0.4 * velocityMult, 0)));
                     moveState = MoveState.NONE;
@@ -138,7 +128,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
             }
         } else {
             wallRunCounter = 0;
-            if (!isOnGround() && jumpInput && hasWall && vel.y <= 0) {
+            if (!isOnGround() && FastMove.INPUT.ismoveUpKeyPressed && hasWall && vel.y <= 0) {
                 moveState = MoveState.WALLRUNNING_LEFT;
                 hungerManager.addExhaustion(FastMove.CONFIG.wallRun.staminaCost());
             }
@@ -179,7 +169,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
 
     @Unique
     private boolean fastmove_isValidForMovement(boolean canSwim, boolean canElytra){
-
         return !isSpectator() && (canElytra || !isFallFlying()) && (canSwim || !isTouchingWater()) && !isClimbing() && !abilities.flying;
     }
 
@@ -197,8 +186,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
 
     @Inject(method = "tick" , at = @At("HEAD"))
     private void fastmove_tick(CallbackInfo info) {
+        if(!FastMove.CONFIG.enableFastMove()) return;
+
         if(this.isMainPlayer()) {
-            if (abilities.flying) {
+            if (abilities.flying || getControllingVehicle() != null) {
                 moveState = MoveState.NONE;
                 updateCurrentMoveState();
                 return;
@@ -208,12 +199,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
                 rollTickCounter++;
                 if (rollTickCounter >= 10) {
                     rollTickCounter= 0;
-                    moveState = lastSneakingState ? MoveState.PRONE : MoveState.NONE;
+                    moveState = FastMove.INPUT.ismoveDownKeyPressed ? MoveState.PRONE : MoveState.NONE;
                 }
                 bonusDecay = 0.98;
             }
             if(moveState == MoveState.SLIDING) {
-                if(!lastSneakingState){
+                if(!FastMove.INPUT.ismoveDownKeyPressed){
                     moveState = MoveState.NONE;
                 }
             }
@@ -229,15 +220,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
 
     @Inject(method = "tick" , at = @At("TAIL"))
     private void fastmove_tick_tail(CallbackInfo info) {
+        if(!FastMove.CONFIG.enableFastMove()) return;
         if(moveState == MoveState.PRONE || moveState == MoveState.ROLLING) setPose(EntityPose.SWIMMING);
     }
 
     @Inject(method = "travel", at = @At("HEAD"))
     private void fastmove_travel(Vec3d movementInput, CallbackInfo info) {
-        if (!isMainPlayer()) return;
-        if (abilities.flying) return;
-        if(isSneaking()){
-            if(!lastSneakingState) {
+        if (!isMainPlayer() || !FastMove.CONFIG.enableFastMove() || abilities.flying || getControllingVehicle() != null) return;
+        fastmove_lastSprintingState = isSprinting();
+        if(FastMove.INPUT.ismoveDownKeyPressed){
+            if(!FastMove.INPUT.ismoveDownKeyPressedLastTick) {
                 var conf = FastMove.CONFIG;
 
                 if (conf.diveRoll.enabled() && !isOnGround() && fastmove_isValidForMovement(conf.diveRoll.whenSwimming(), conf.diveRoll.whenFlying())) {
@@ -245,7 +237,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
                     moveState = MoveState.ROLLING;
                     bonusVelocity = fastmove_movementInputToVelocity(new Vec3d(0, 0, 1), 0.1f * conf.diveRoll.speedBoostMult(), getYaw());
                     setSprinting(true);
-                } else if (conf.slide.enabled() && isSprinting() && fastmove_isValidForMovement(false, false) ) {
+                } else if (conf.slide.enabled() && fastmove_lastSprintingState && fastmove_isValidForMovement(false, false) ) {
                     hungerManager.addExhaustion(conf.slide.staminaCost());
                     moveState = MoveState.SLIDING;
                     bonusVelocity = fastmove_movementInputToVelocity(new Vec3d(0,0,1), 0.2f * conf.slide.speedBoostMult(), getYaw());
@@ -257,8 +249,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
                 moveState = MoveState.NONE;
             }
         }
-        lastSneakingState = isSneaking();
-        lastSprintingState = isSprinting();
     }
 
     @Inject(method = "adjustMovementForSneaking", at = @At("HEAD"), cancellable = true)
@@ -269,11 +259,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
             }
         }
     }
-
+    @Unique
+    private boolean fastmove_lastSprintingState = false;
     @Inject(method="jump", at=@At("HEAD"))
     private void fastmove_jump(CallbackInfo info){
         if(this.isMainPlayer()){
-            setSprinting(lastSprintingState);
+            setSprinting(fastmove_lastSprintingState);
             if(moveState == MoveState.SLIDING || moveState == MoveState.PRONE){
                 moveState = MoveState.NONE;
             }

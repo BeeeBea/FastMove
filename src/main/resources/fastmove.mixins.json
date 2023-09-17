@@ -8,8 +8,7 @@
     "ServerPlayHandlerMixin"
   ],
   "client": [
-    "AbstractClientPlayerEntityMixin",
-    "ClientPlayerEntityMixin"
+    "AbstractClientPlayerEntityMixin"
   ],
   "server": [
   ],

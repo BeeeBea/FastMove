@@ -7,6 +7,7 @@ import dev.kosmx.playerAnim.core.util.Ease;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationRegistry;
 import io.github.beeebea.fastmove.*;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.entity.Entity;
@@ -24,6 +25,8 @@ public class FastMoveClient extends FastMove implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         LOGGER.info("initializing FastMove Client :3");
+
+        ClientTickEvents.END_CLIENT_TICK.register(client -> INPUT.onEndTick(client));
 
         moveStateUpdater = new IMoveStateUpdater(){
             @Override

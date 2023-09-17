@@ -6,6 +6,10 @@ import io.wispforest.owo.config.annotation.*;
 @Modmenu(modId = FastMove.MOD_ID)
 @Config(name = "fastmove", wrapperName = "FastMoveConfig")
 public class FastMoveConfigModel {
+
+    @Sync(Option.SyncMode.OVERRIDE_CLIENT)
+    public boolean enableFastMove = true;
+
     @Nest
     @Sync(Option.SyncMode.OVERRIDE_CLIENT)
     public movementOptionsEnv diveRoll = new movementOptionsEnv();

@@ -1,21 +1,25 @@
 {
-  "text.config.fastmove-config.title" : "FastMove Config",
+  "text.config.fastmove.title" : "FastMove Config",
+  "text.config.fastmove.option.enableFastMove" : "Enable Mod",
 
-  "text.config.fastmove-config.category.diveRoll" : "Dive-Roll Options",
-  "text.config.fastmove-config.option.diveRoll.enabled" : "Enabled",
-  "text.config.fastmove-config.option.diveRoll.staminaCost" : "Stamina Cost",
-  "text.config.fastmove-config.option.diveRoll.speedBoostMult" : "Speed Boost",
-  "text.config.fastmove-config.option.diveRoll.whenSwimming" : "Enabled While Underwater   (Unbalanced)",
-  "text.config.fastmove-config.option.diveRoll.whenFlying" : "Enabled While Using Elytra   (Unbalanced)",
+  "text.config.fastmove.category.diveRoll" : "Dive-Roll Options",
+  "text.config.fastmove.option.diveRoll.enabled" : "Enabled",
+  "text.config.fastmove.option.diveRoll.staminaCost" : "Stamina Cost",
+  "text.config.fastmove.option.diveRoll.speedBoostMult" : "Speed Boost",
+  "text.config.fastmove.option.diveRoll.whenSwimming" : "Enabled While Underwater   (Unbalanced)",
+  "text.config.fastmove.option.diveRoll.whenFlying" : "Enabled While Using Elytra   (Unbalanced)",
 
-  "text.config.fastmove-config.category.slide" : "Slide Options",
-  "text.config.fastmove-config.option.slide.enabled" : "Enabled",
-  "text.config.fastmove-config.option.slide.staminaCost" : "Stamina Cost",
-  "text.config.fastmove-config.option.slide.speedBoostMult" : "Speed Boost",
+  "text.config.fastmove.category.slide" : "Slide Options",
+  "text.config.fastmove.option.slide.enabled" : "Enabled",
+  "text.config.fastmove.option.slide.staminaCost" : "Stamina Cost",
+  "text.config.fastmove.option.slide.speedBoostMult" : "Speed Boost",
 
-  "text.config.fastmove-config.category.wallRun" : "Wall-Run Options",
-  "text.config.fastmove-config.option.wallRun.enabled" : "Enabled",
-  "text.config.fastmove-config.option.wallRun.staminaCost" : "Stamina Cost",
-  "text.config.fastmove-config.option.wallRun.speedBoostMult" : "Speed Boost",
-  "text.config.fastmove-config.option.wallRun.durationTicks" : "Duration (Ticks)"
+  "text.config.fastmove.category.wallRun" : "Wall-Run Options",
+  "text.config.fastmove.option.wallRun.enabled" : "Enabled",
+  "text.config.fastmove.option.wallRun.staminaCost" : "Stamina Cost",
+  "text.config.fastmove.option.wallRun.speedBoostMult" : "Speed Boost",
+  "text.config.fastmove.option.wallRun.durationTicks" : "Duration (Ticks)",
+
+  "key.fastmove.up" : "FastMove Up",
+  "key.fastmove.down" : "FastMove Down"
 }
