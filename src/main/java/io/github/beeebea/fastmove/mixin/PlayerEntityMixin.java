@@ -3,7 +3,6 @@ package io.github.beeebea.fastmove.mixin;
 import io.github.beeebea.fastmove.FastMove;
 import io.github.beeebea.fastmove.IFastPlayer;
 import io.github.beeebea.fastmove.MoveState;
-import io.github.beeebea.fastmove.client.FastMoveInput;
 import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DeathMessageType;
@@ -11,6 +10,7 @@ import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
@@ -20,7 +20,8 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -43,6 +44,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
     @Unique private int wallRunCounter = 0;
     @Unique private Vec3d lastWallDir = Vec3d.ZERO;
     @Unique private boolean isWallLeft = false;
+    @Unique private int slideCooldown = 0;
+    @Unique private int diveCooldown = 0;
+    @Unique private BlockPos lastBlockPos = null;
+
 
     @Override
     public MoveState fastmove_getMoveState() {
@@ -112,6 +117,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
             } else {
                 wallRunCounter++;
                 setSprinting(true);
+
+                var wallBlockPos = getBlockPos().subtract(BlockPos.ofFloored(lastWallDir));
+                if(lastBlockPos == null || !lastBlockPos.equals(wallBlockPos)) {
+                    lastBlockPos = wallBlockPos;
+                    playStepSound(wallBlockPos, getWorld().getBlockState(wallBlockPos));
+                }
+
                 var flatVel = vel.multiply(1, 0, 1);
                 var wallVel = isWallLeft ? flatVel.normalize().rotateY(90) : flatVel.normalize().rotateY(-90);
                 moveState = !isWallLeft ? MoveState.WALLRUNNING_LEFT : MoveState.WALLRUNNING_RIGHT;
@@ -222,6 +234,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
     private void fastmove_tick_tail(CallbackInfo info) {
         if(!FastMove.CONFIG.enableFastMove()) return;
         if(moveState == MoveState.PRONE || moveState == MoveState.ROLLING) setPose(EntityPose.SWIMMING);
+        if(diveCooldown > 0) diveCooldown--;
+        if(slideCooldown > 0) slideCooldown--;
     }
 
     @Inject(method = "travel", at = @At("HEAD"))
@@ -231,13 +245,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
         if(FastMove.INPUT.ismoveDownKeyPressed){
             if(!FastMove.INPUT.ismoveDownKeyPressedLastTick) {
                 var conf = FastMove.CONFIG;
-
-                if (conf.diveRoll.enabled() && !isOnGround() && fastmove_isValidForMovement(conf.diveRoll.whenSwimming(), conf.diveRoll.whenFlying())) {
+                if (diveCooldown == 0 && conf.diveRoll.enabled() && !isOnGround()
+                                        && fastmove_isValidForMovement(conf.diveRoll.whenSwimming(), conf.diveRoll.whenFlying())) {
+                    diveCooldown = conf.diveRoll.cooldown();
                     hungerManager.addExhaustion(conf.diveRoll.staminaCost());
                     moveState = MoveState.ROLLING;
                     bonusVelocity = fastmove_movementInputToVelocity(new Vec3d(0, 0, 1), 0.1f * conf.diveRoll.speedBoostMult(), getYaw());
                     setSprinting(true);
-                } else if (conf.slide.enabled() && fastmove_lastSprintingState && fastmove_isValidForMovement(false, false) ) {
+                } else if (slideCooldown == 0 && conf.slide.enabled() && fastmove_lastSprintingState
+                                        && fastmove_isValidForMovement(false, false) ) {
+                    slideCooldown = conf.slide.cooldown();
                     hungerManager.addExhaustion(conf.slide.staminaCost());
                     moveState = MoveState.SLIDING;
                     bonusVelocity = fastmove_movementInputToVelocity(new Vec3d(0,0,1), 0.2f * conf.slide.speedBoostMult(), getYaw());

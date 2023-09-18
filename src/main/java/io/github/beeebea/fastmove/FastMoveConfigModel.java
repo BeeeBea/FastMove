@@ -26,6 +26,8 @@ public class FastMoveConfigModel {
         public int staminaCost = 10;
         @RangeConstraint(min = 0, max = 10)
         public double speedBoostMult = 1.0;
+        @RangeConstraint(min = 0, max = 999)
+        public int cooldown = 0;
     }
     public static class movementOptionsEnv {
         public boolean enabled = true;
@@ -33,6 +35,8 @@ public class FastMoveConfigModel {
         public int staminaCost = 50;
         @RangeConstraint(min = 0, max = 10)
         public double speedBoostMult = 1.0;
+        @RangeConstraint(min = 0, max = 999)
+        public int cooldown = 0;
         public boolean whenSwimming = false;
         public boolean whenFlying = false;
     }
