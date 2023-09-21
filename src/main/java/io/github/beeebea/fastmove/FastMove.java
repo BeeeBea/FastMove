@@ -9,6 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.uku3lig.ukulib.config.ConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +20,10 @@ import io.github.beeebea.fastmove.FastMoveConfig;
 
 public class FastMove implements ModInitializer {
     public static final String MOD_ID = "fastmove";
-    public static final FastMoveConfig CONFIG = FastMoveConfig.createAndLoad();
+    public static final ConfigManager<FastMoveConfig> CONFIG_MANAGER =  ConfigManager.createDefault(FastMoveConfig.class, MOD_ID);
+    public static FastMoveConfig getConfig() {
+        return CONFIG_MANAGER.getConfig();
+    }
     public static FastMoveInput INPUT = new FastMoveInput();
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final Identifier MOVE_STATE = new Identifier(MOD_ID, "move_state");

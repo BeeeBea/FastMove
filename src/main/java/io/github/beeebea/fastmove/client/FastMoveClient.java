@@ -1,6 +1,8 @@
 package io.github.beeebea.fastmove.client;
 
 import dev.kosmx.playerAnim.api.layered.KeyframeAnimationPlayer;
+import dev.kosmx.playerAnim.api.layered.KeyframeAnimationPlayer.BodyPart;
+import dev.kosmx.playerAnim.api.layered.ModifierLayer;
 import dev.kosmx.playerAnim.api.layered.modifier.AbstractFadeModifier;
 import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
 import dev.kosmx.playerAnim.core.util.Ease;
@@ -12,11 +14,13 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
 import java.util.Deque;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 public class FastMoveClient extends FastMove implements ClientModInitializer {
     private static final Map<String, KeyframeAnimation> _animations = new java.util.HashMap<>();
@@ -58,7 +62,7 @@ public class FastMoveClient extends FastMove implements ClientModInitializer {
                     }
                 }
 
-                var fade = AbstractFadeModifier.standardFadeIn(5, Ease.INOUTQUAD);
+                var fade = AbstractFadeModifier.standardFadeIn(10, Ease.INOUTQUAD);
                 var anim = _animations.get(moveState.name);
                 if(anim == null) {
                     animationBodyContainer.replaceAnimationWithFade(fade, null);
