@@ -9,7 +9,6 @@ import net.minecraft.entity.damage.DeathMessageType;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -137,7 +136,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
                 }
                 addVelocity(new Vec3d(0, -vel.y * (1 - ((double) wallRunCounter / FastMove.getConfig().wallRun.durationTicks)), 0));
                 bonusVelocity = Vec3d.ZERO;
-                if (!FastMove.INPUT.ismoveUpKeyPressed) {
+                if (!FastMove.INPUT.ismoveUpKeyPressed()) {
                     double velocityMult = FastMove.getConfig().wallRun.speedBoostMult;
                     addVelocity(wallVel.multiply(0.3 * velocityMult, 0, 0.3 * velocityMult).add(new Vec3d(0, 0.4 * velocityMult, 0)));
                     moveState = MoveState.NONE;
@@ -145,7 +144,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
             }
         } else {
             wallRunCounter = 0;
-            if (!isOnGround() && FastMove.INPUT.ismoveUpKeyPressed && hasWall && vel.y <= 0) {
+            if (!isOnGround() && FastMove.INPUT.ismoveUpKeyPressed() && hasWall && vel.y <= 0) {
                 moveState = MoveState.WALLRUNNING_LEFT;
                 hungerManager.addExhaustion(FastMove.getConfig().wallRun.staminaCost);
             }
@@ -216,12 +215,12 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
                 rollTickCounter++;
                 if (rollTickCounter >= 10) {
                     rollTickCounter= 0;
-                    moveState = FastMove.INPUT.ismoveDownKeyPressed ? MoveState.PRONE : MoveState.NONE;
+                    moveState = FastMove.INPUT.ismoveDownKeyPressed() ? MoveState.PRONE : MoveState.NONE;
                 }
                 bonusDecay = 0.98;
             }
             if(moveState == MoveState.SLIDING) {
-                if(!FastMove.INPUT.ismoveDownKeyPressed){
+                if(!FastMove.INPUT.ismoveDownKeyPressed()){
                     moveState = MoveState.NONE;
                 }
             }
@@ -247,8 +246,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
     private void fastmove_travel(Vec3d movementInput, CallbackInfo info) {
         if (!isMainPlayer() || !FastMove.getConfig().enableFastMove || abilities.flying || getControllingVehicle() != null) return;
         fastmove_lastSprintingState = isSprinting();
-        if(FastMove.INPUT.ismoveDownKeyPressed){
-            if(!FastMove.INPUT.ismoveDownKeyPressedLastTick) {
+        if(FastMove.INPUT.ismoveDownKeyPressed()){
+            if(!FastMove.INPUT.ismoveDownKeyPressedLastTick()) {
                 var conf = FastMove.getConfig();
                 if (diveCooldown == 0 && conf.diveRoll.enabled && !isOnGround()
                                         && getVelocity().multiply(1, 0, 1).lengthSquared() > 0.05

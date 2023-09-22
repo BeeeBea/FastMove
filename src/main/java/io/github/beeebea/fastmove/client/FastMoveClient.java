@@ -30,7 +30,9 @@ public class FastMoveClient extends FastMove implements ClientModInitializer {
     public void onInitializeClient() {
         LOGGER.info("initializing FastMove Client :3");
 
-        ClientTickEvents.END_CLIENT_TICK.register(client -> INPUT.onEndTick(client));
+        FastMoveInput input = new FastMoveInput();
+        INPUT = input;
+        ClientTickEvents.END_CLIENT_TICK.register(input::onEndTick);
 
         moveStateUpdater = new IMoveStateUpdater(){
             @Override

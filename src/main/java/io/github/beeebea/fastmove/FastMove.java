@@ -22,25 +22,33 @@ public class FastMove implements ModInitializer {
     public static FastMoveConfig getConfig() {
         return CONFIG_MANAGER.getConfig();
     }
-    public static FastMoveInput INPUT = new FastMoveInput();
+
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final Identifier MOVE_STATE = new Identifier(MOD_ID, "move_state");
     private static final Object _queueLock = new Object();
     private static final Queue<Runnable> _actionQueue = new LinkedList<>();
     public static IMoveStateUpdater moveStateUpdater;
-
+    public static IFastMoveInput INPUT;
     @Override
     public void onInitialize() {
         LOGGER.info("initializing FastMove :3");
 
         moveStateUpdater = new IMoveStateUpdater(){
             @Override
-            public void setMoveState(PlayerEntity player, MoveState moveState) {
-            }
+            public void setMoveState(PlayerEntity player, MoveState moveState) {}
             @Override
-            public void setAnimationState(PlayerEntity player, MoveState moveState) {
+            public void setAnimationState(PlayerEntity player, MoveState moveState) {}
+        };
 
-            }
+        INPUT = new IFastMoveInput() {
+            @Override
+            public boolean ismoveUpKeyPressed() {return false;}
+            @Override
+            public boolean ismoveDownKeyPressed() {return false;}
+            @Override
+            public boolean ismoveUpKeyPressedLastTick() {return false;}
+            @Override
+            public boolean ismoveDownKeyPressedLastTick() {return false;}
         };
 
         ServerPlayNetworking.registerGlobalReceiver(MOVE_STATE, (server, player, handler, buf, responseSender) -> {
