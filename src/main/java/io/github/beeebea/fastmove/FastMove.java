@@ -1,14 +1,17 @@
 package io.github.beeebea.fastmove;
 
-import io.github.beeebea.fastmove.client.FastMoveInput;
+import io.github.beeebea.fastmove.config.FastMoveConfig;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.uku3lig.ukulib.config.ConfigManager;
+import net.uku3lig.ukulib.config.serialization.TomlConfigSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,13 +21,14 @@ import java.util.UUID;
 
 public class FastMove implements ModInitializer {
     public static final String MOD_ID = "fastmove";
-    public static final ConfigManager<FastMoveConfig> CONFIG_MANAGER =  ConfigManager.createDefault(FastMoveConfig.class, MOD_ID);
+    public static final ConfigManager<FastMoveConfig> CONFIG_MANAGER = ConfigManager.createDefault(FastMoveConfig.class, MOD_ID);
     public static FastMoveConfig getConfig() {
         return CONFIG_MANAGER.getConfig();
     }
 
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final Identifier MOVE_STATE = new Identifier(MOD_ID, "move_state");
+    public static final Identifier CONFIG_STATE = new Identifier(MOD_ID, "config_state");
     private static final Object _queueLock = new Object();
     private static final Queue<Runnable> _actionQueue = new LinkedList<>();
     public static IMoveStateUpdater moveStateUpdater;
@@ -68,6 +72,26 @@ public class FastMove implements ModInitializer {
                     _actionQueue.poll().run();
                 }
             }
+        });
+        //send config to clients on join
+        ServerLoginConnectionEvents.QUERY_START.register((handler, server, sender, synchronizer) -> {
+            var buf = PacketByteBufs.create();
+            buf.writeBoolean(getConfig().enableFastMove);
+            buf.writeBoolean(getConfig().diveRollEnabled);
+            buf.writeInt(getConfig().diveRollStaminaCost);
+            buf.writeDouble(getConfig().diveRollSpeedBoostMultiplier);
+            buf.writeInt(getConfig().diveRollCoolDown);
+            buf.writeBoolean(getConfig().diveRollWhenSwimming);
+            buf.writeBoolean(getConfig().diveRollWhenFlying);
+            buf.writeBoolean(getConfig().wallRunEnabled);
+            buf.writeInt(getConfig().wallRunStaminaCost);
+            buf.writeDouble(getConfig().wallRunSpeedBoostMultiplier);
+            buf.writeInt(getConfig().wallRunDurationTicks);
+            buf.writeBoolean(getConfig().slideEnabled);
+            buf.writeInt(getConfig().slideStaminaCost);
+            buf.writeDouble(getConfig().slideSpeedBoostMultiplier);
+            buf.writeInt(getConfig().slideCoolDown);
+            sender.sendPacket(CONFIG_STATE, buf);
         });
     }
 

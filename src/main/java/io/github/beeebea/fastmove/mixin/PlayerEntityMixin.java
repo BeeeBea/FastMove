@@ -134,10 +134,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
                 if (fastmove_velocityToMovementInput(flatVel, getYaw()).dotProduct(lastWallDir) < 0) {
                     addVelocity(wallVel.multiply(-0.1, 0, -0.1));
                 }
-                addVelocity(new Vec3d(0, -vel.y * (1 - ((double) wallRunCounter / FastMove.getConfig().wallRun.durationTicks)), 0));
+                addVelocity(new Vec3d(0, -vel.y * (1 - ((double) wallRunCounter / FastMove.getConfig().getWallRunDurationTicks())), 0));
                 bonusVelocity = Vec3d.ZERO;
                 if (!FastMove.INPUT.ismoveUpKeyPressed()) {
-                    double velocityMult = FastMove.getConfig().wallRun.speedBoostMult;
+                    double velocityMult = FastMove.getConfig().getWallRunSpeedBoostMultiplier();
                     addVelocity(wallVel.multiply(0.3 * velocityMult, 0, 0.3 * velocityMult).add(new Vec3d(0, 0.4 * velocityMult, 0)));
                     moveState = MoveState.NONE;
                 }
@@ -146,7 +146,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
             wallRunCounter = 0;
             if (!isOnGround() && FastMove.INPUT.ismoveUpKeyPressed() && hasWall && vel.y <= 0) {
                 moveState = MoveState.WALLRUNNING_LEFT;
-                hungerManager.addExhaustion(FastMove.getConfig().wallRun.staminaCost);
+                hungerManager.addExhaustion(FastMove.getConfig().getWallRunStaminaCost());
             }
         }
     }
@@ -225,7 +225,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
                 }
             }
 
-            if(FastMove.getConfig().wallRun.enabled) fastmove_WallRun();
+            if(FastMove.getConfig().wallRunEnabled) fastmove_WallRun();
 
             addVelocity(bonusVelocity);
             bonusVelocity = bonusVelocity.multiply(bonusDecay,0,bonusDecay);
@@ -249,20 +249,20 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
         if(FastMove.INPUT.ismoveDownKeyPressed()){
             if(!FastMove.INPUT.ismoveDownKeyPressedLastTick()) {
                 var conf = FastMove.getConfig();
-                if (diveCooldown == 0 && conf.diveRoll.enabled && !isOnGround()
+                if (diveCooldown == 0 && conf.diveRollEnabled && !isOnGround()
                                         && getVelocity().multiply(1, 0, 1).lengthSquared() > 0.05
-                                        && fastmove_isValidForMovement(conf.diveRoll.whenSwimming, conf.diveRoll.whenFlying)) {
-                    diveCooldown = conf.diveRoll.cooldown;
-                    hungerManager.addExhaustion(conf.diveRoll.staminaCost);
+                                        && fastmove_isValidForMovement(conf.diveRollWhenSwimming, conf.diveRollWhenFlying)) {
+                    diveCooldown = conf.getDiveRollCoolDown();
+                    hungerManager.addExhaustion(conf.getDiveRollStaminaCost());
                     moveState = MoveState.ROLLING;
-                    bonusVelocity = fastmove_movementInputToVelocity(new Vec3d(0, 0, 1), 0.1f * conf.diveRoll.speedBoostMult, getYaw());
+                    bonusVelocity = fastmove_movementInputToVelocity(new Vec3d(0, 0, 1), 0.1f * conf.getDiveRollSpeedBoostMultiplier(), getYaw());
                     setSprinting(true);
-                } else if (slideCooldown == 0 && conf.slide.enabled && fastmove_lastSprintingState
+                } else if (slideCooldown == 0 && conf.slideEnabled && fastmove_lastSprintingState
                                         && fastmove_isValidForMovement(false, false) ) {
-                    slideCooldown = conf.slide.cooldown;
-                    hungerManager.addExhaustion(conf.slide.staminaCost);
+                    slideCooldown = conf.getSlideCoolDown();
+                    hungerManager.addExhaustion(conf.getSlideStaminaCost());
                     moveState = MoveState.SLIDING;
-                    bonusVelocity = fastmove_movementInputToVelocity(new Vec3d(0,0,1), 0.2f * conf.slide.speedBoostMult, getYaw());
+                    bonusVelocity = fastmove_movementInputToVelocity(new Vec3d(0,0,1), 0.2f * conf.getSlideSpeedBoostMultiplier(), getYaw());
                     setSprinting(true);
                 }
             }

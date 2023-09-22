@@ -10,6 +10,7 @@ import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationRegistry;
 import io.github.beeebea.fastmove.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.entity.Entity;
@@ -90,6 +91,27 @@ public class FastMoveClient extends FastMove implements ClientModInitializer {
                 IFastPlayer fastPlayer = (IFastPlayer) client.world.getPlayerByUuid(uuid);
                 if (fastPlayer != null) fastPlayer.fastmove_setMoveState(moveState);
             }
+        });
+
+        //Set config on join
+        ClientLoginNetworking.registerGlobalReceiver(FastMove.CONFIG_STATE, (client, handler, buf, responseSender) -> {
+            var config = FastMove.getConfig();
+            config.enableFastMove = buf.readBoolean();
+            config.diveRollEnabled = buf.readBoolean();
+            config.diveRollStaminaCost = buf.readInt();
+            config.diveRollSpeedBoostMultiplier = buf.readDouble();
+            config.diveRollCoolDown = buf.readInt();
+            config.diveRollWhenSwimming = buf.readBoolean();
+            config.diveRollWhenFlying = buf.readBoolean();
+            config.wallRunEnabled = buf.readBoolean();
+            config.wallRunStaminaCost = buf.readInt();
+            config.wallRunSpeedBoostMultiplier = buf.readDouble();
+            config.wallRunDurationTicks = buf.readInt();
+            config.slideEnabled = buf.readBoolean();
+            config.slideStaminaCost = buf.readInt();
+            config.slideSpeedBoostMultiplier = buf.readDouble();
+            config.slideCoolDown = buf.readInt();
+            return null;
         });
 
     }
