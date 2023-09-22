@@ -7,8 +7,8 @@
   "text.config.fastmove.option.diveRoll.staminaCost" : "Stamina Cost",
   "text.config.fastmove.option.diveRoll.speedBoostMult" : "Speed Boost",
   "text.config.fastmove.option.diveRoll.cooldown" : "Cooldown (Ticks)",
-  "text.config.fastmove.option.diveRoll.whenSwimming" : "Enabled While Underwater   (Unbalanced)",
-  "text.config.fastmove.option.diveRoll.whenFlying" : "Enabled While Using Elytra   (Unbalanced)",
+  "text.config.fastmove.option.diveRoll.whenSwimming" : "Enabled While Underwater",
+  "text.config.fastmove.option.diveRoll.whenFlying" : "Enabled While Using Elytra",
 
   "text.config.fastmove.category.slide" : "Slide Options",
   "text.config.fastmove.option.slide.enabled" : "Enabled",

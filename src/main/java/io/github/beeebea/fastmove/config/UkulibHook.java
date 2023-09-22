@@ -1,4 +1,4 @@
-package io.github.beeebea.fastmove;
+package io.github.beeebea.fastmove.config;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.uku3lig.ukulib.api.UkulibAPI;
