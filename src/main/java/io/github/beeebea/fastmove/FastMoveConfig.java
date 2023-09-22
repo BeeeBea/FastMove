@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.minecraft.client.gui.screen.Screen;
 import net.uku3lig.ukulib.config.ConfigManager;
 
 

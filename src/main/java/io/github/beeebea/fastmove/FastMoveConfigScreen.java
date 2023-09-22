@@ -1,7 +1,6 @@
 package io.github.beeebea.fastmove;
 
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.option.SimpleOption;
 import net.uku3lig.ukulib.config.ConfigManager;
 import net.uku3lig.ukulib.config.option.CyclingOption;
 import net.uku3lig.ukulib.config.option.WidgetCreator;
