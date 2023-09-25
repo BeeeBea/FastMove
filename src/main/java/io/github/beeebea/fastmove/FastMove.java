@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -21,11 +22,11 @@ import java.util.UUID;
 
 public class FastMove implements ModInitializer {
     public static final String MOD_ID = "fastmove";
-    public static final ConfigManager<FastMoveConfig> CONFIG_MANAGER = ConfigManager.createDefault(FastMoveConfig.class, MOD_ID);
+    protected static FastMoveConfig serverConfig = null;
     public static FastMoveConfig getConfig() {
-        return CONFIG_MANAGER.getConfig();
+        if(serverConfig != null) return serverConfig;
+        return FastMoveConfig.getManager().getConfig();
     }
-
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final Identifier MOVE_STATE = new Identifier(MOD_ID, "move_state");
     public static final Identifier CONFIG_STATE = new Identifier(MOD_ID, "config_state");
@@ -74,7 +75,7 @@ public class FastMove implements ModInitializer {
             }
         });
         //send config to clients on join
-        ServerLoginConnectionEvents.QUERY_START.register((handler, server, sender, synchronizer) -> {
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             var buf = PacketByteBufs.create();
             buf.writeBoolean(getConfig().enableFastMove);
             buf.writeBoolean(getConfig().diveRollEnabled);
@@ -93,6 +94,7 @@ public class FastMove implements ModInitializer {
             buf.writeInt(getConfig().slideCoolDown);
             sender.sendPacket(CONFIG_STATE, buf);
         });
+
     }
 
     public static void SendToClients(PlayerEntity source, Identifier type, UUID uuid, int moveStateInt){
