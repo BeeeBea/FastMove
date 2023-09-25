@@ -8,9 +8,11 @@ import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
 import dev.kosmx.playerAnim.core.util.Ease;
 import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationRegistry;
 import io.github.beeebea.fastmove.*;
+import io.github.beeebea.fastmove.config.FastMoveConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.entity.Entity;
@@ -94,25 +96,27 @@ public class FastMoveClient extends FastMove implements ClientModInitializer {
         });
 
         //Set config on join
-        ClientLoginNetworking.registerGlobalReceiver(FastMove.CONFIG_STATE, (client, handler, buf, responseSender) -> {
-            var config = FastMove.getConfig();
-            config.enableFastMove = buf.readBoolean();
-            config.diveRollEnabled = buf.readBoolean();
-            config.diveRollStaminaCost = buf.readInt();
-            config.diveRollSpeedBoostMultiplier = buf.readDouble();
-            config.diveRollCoolDown = buf.readInt();
-            config.diveRollWhenSwimming = buf.readBoolean();
-            config.diveRollWhenFlying = buf.readBoolean();
-            config.wallRunEnabled = buf.readBoolean();
-            config.wallRunStaminaCost = buf.readInt();
-            config.wallRunSpeedBoostMultiplier = buf.readDouble();
-            config.wallRunDurationTicks = buf.readInt();
-            config.slideEnabled = buf.readBoolean();
-            config.slideStaminaCost = buf.readInt();
-            config.slideSpeedBoostMultiplier = buf.readDouble();
-            config.slideCoolDown = buf.readInt();
-            return null;
+        ClientPlayNetworking.registerGlobalReceiver(FastMove.CONFIG_STATE, (client, handler, buf, responseSender) -> {
+            serverConfig = new FastMoveConfig();
+            serverConfig.enableFastMove = buf.readBoolean();
+            serverConfig.diveRollEnabled = buf.readBoolean();
+            serverConfig.diveRollStaminaCost = buf.readInt();
+            serverConfig.diveRollSpeedBoostMultiplier = buf.readDouble();
+            serverConfig.diveRollCoolDown = buf.readInt();
+            serverConfig.diveRollWhenSwimming = buf.readBoolean();
+            serverConfig.diveRollWhenFlying = buf.readBoolean();
+            serverConfig.wallRunEnabled = buf.readBoolean();
+            serverConfig.wallRunStaminaCost = buf.readInt();
+            serverConfig.wallRunSpeedBoostMultiplier = buf.readDouble();
+            serverConfig.wallRunDurationTicks = buf.readInt();
+            serverConfig.slideEnabled = buf.readBoolean();
+            serverConfig.slideStaminaCost = buf.readInt();
+            serverConfig.slideSpeedBoostMultiplier = buf.readDouble();
+            serverConfig.slideCoolDown = buf.readInt();
+            LOGGER.info("Got config from server");
         });
+
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> serverConfig = null);
 
     }
 

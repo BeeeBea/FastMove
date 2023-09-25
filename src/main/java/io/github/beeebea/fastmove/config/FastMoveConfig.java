@@ -53,4 +53,22 @@ public class FastMoveConfig implements Serializable {
     public int slideStaminaCost;
     public double slideSpeedBoostMultiplier;
     public int slideCoolDown;
+
+    public FastMoveConfig(FastMoveConfig config) {
+        enableFastMove = config.enableFastMove;
+        diveRollEnabled = config.diveRollEnabled;
+        diveRollStaminaCost = config.diveRollStaminaCost;
+        diveRollSpeedBoostMultiplier = config.diveRollSpeedBoostMultiplier;
+        diveRollCoolDown = config.diveRollCoolDown;
+        diveRollWhenSwimming = config.diveRollWhenSwimming;
+        diveRollWhenFlying = config.diveRollWhenFlying;
+        wallRunEnabled = config.wallRunEnabled;
+        wallRunStaminaCost = config.wallRunStaminaCost;
+        wallRunSpeedBoostMultiplier = config.wallRunSpeedBoostMultiplier;
+        wallRunDurationTicks = config.wallRunDurationTicks;
+        slideEnabled = config.slideEnabled;
+        slideStaminaCost = config.slideStaminaCost;
+        slideSpeedBoostMultiplier = config.slideSpeedBoostMultiplier;
+        slideCoolDown = config.slideCoolDown;
+    }
 }
