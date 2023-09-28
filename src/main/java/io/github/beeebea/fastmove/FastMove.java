@@ -1,18 +1,15 @@
 package io.github.beeebea.fastmove;
 
 import io.github.beeebea.fastmove.config.FastMoveConfig;
+import io.github.beeebea.fastmove.config.IFastMoveConfig;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-import net.uku3lig.ukulib.config.ConfigManager;
-import net.uku3lig.ukulib.config.serialization.TomlConfigSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +22,7 @@ public class FastMove implements ModInitializer {
     protected static FastMoveConfig serverConfig = null;
     public static FastMoveConfig getConfig() {
         if(serverConfig != null) return serverConfig;
-        return FastMoveConfig.getManager().getConfig();
+        return CONFIG.getConfig();
     }
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final Identifier MOVE_STATE = new Identifier(MOD_ID, "move_state");
@@ -34,6 +31,8 @@ public class FastMove implements ModInitializer {
     private static final Queue<Runnable> _actionQueue = new LinkedList<>();
     public static IMoveStateUpdater moveStateUpdater;
     public static IFastMoveInput INPUT;
+    public static IFastMoveConfig CONFIG;
+
     @Override
     public void onInitialize() {
         LOGGER.info("initializing FastMove :3");
@@ -55,6 +54,8 @@ public class FastMove implements ModInitializer {
             @Override
             public boolean ismoveDownKeyPressedLastTick() {return false;}
         };
+
+        CONFIG = FastMoveConfig::new;
 
         ServerPlayNetworking.registerGlobalReceiver(MOVE_STATE, (server, player, handler, buf, responseSender) -> {
             var uuid = buf.readUuid();

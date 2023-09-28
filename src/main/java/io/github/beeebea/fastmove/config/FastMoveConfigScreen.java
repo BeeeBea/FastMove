@@ -1,7 +1,6 @@
 package io.github.beeebea.fastmove.config;
 
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.Widget;
 import net.uku3lig.ukulib.config.ConfigManager;
 import net.uku3lig.ukulib.config.option.*;
 import net.uku3lig.ukulib.config.screen.AbstractConfigScreen;
