@@ -1,11 +1,8 @@
 package io.github.beeebea.fastmove.config;
 
-import io.github.beeebea.fastmove.FastMove;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.uku3lig.ukulib.config.ConfigManager;
 
 
 import java.io.Serializable;
@@ -13,9 +10,6 @@ import java.io.Serializable;
 @Setter
 @AllArgsConstructor
 public class FastMoveConfig implements Serializable {
-    @Getter
-    private static final ConfigManager<FastMoveConfig> manager = ConfigManager.createDefault(FastMoveConfig.class, FastMove.MOD_ID);
-
     public FastMoveConfig() {
         enableFastMove = true;
         diveRollEnabled = true;

@@ -1,8 +1,6 @@
 package io.github.beeebea.fastmove.client;
 
 import dev.kosmx.playerAnim.api.layered.KeyframeAnimationPlayer;
-import dev.kosmx.playerAnim.api.layered.KeyframeAnimationPlayer.BodyPart;
-import dev.kosmx.playerAnim.api.layered.ModifierLayer;
 import dev.kosmx.playerAnim.api.layered.modifier.AbstractFadeModifier;
 import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
 import dev.kosmx.playerAnim.core.util.Ease;
@@ -11,23 +9,17 @@ import io.github.beeebea.fastmove.*;
 import io.github.beeebea.fastmove.config.FastMoveConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
-
-import java.util.Deque;
+import net.uku3lig.ukulib.config.ConfigManager;
 import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
 
 public class FastMoveClient extends FastMove implements ClientModInitializer {
     private static final Map<String, KeyframeAnimation> _animations = new java.util.HashMap<>();
-
+    public static final ConfigManager<FastMoveConfig> CONFIG_MANAGER = ConfigManager.createDefault(FastMoveConfig.class, FastMove.MOD_ID);
 
     @Override
     public void onInitializeClient() {
@@ -83,6 +75,8 @@ public class FastMoveClient extends FastMove implements ClientModInitializer {
                 animationContainer.replaceAnimationWithFade(fade, new KeyframeAnimationPlayer(anim));
             }
         };
+
+        CONFIG = CONFIG_MANAGER::getConfig;
 
         //register receivers
         ClientPlayNetworking.registerGlobalReceiver(FastMove.MOVE_STATE, (client, handler, buf, responseSender) -> {
