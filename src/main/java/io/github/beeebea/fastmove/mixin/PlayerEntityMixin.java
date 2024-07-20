@@ -228,6 +228,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IFastPla
                     moveState = MoveState.NONE;
                 }
             }
+            if (lastMoveState == MoveState.SLIDING && moveState != MoveState.SLIDING) {
+                bonusDecay = 0.3; // TODO: Value should be configurable
+            }
 
             if(FastMove.getConfig().wallRunEnabled()) fastmove_WallRun();
 
